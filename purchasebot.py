@@ -3,6 +3,7 @@ import requests
 import json
 import schedule
 from selenium import webdriver
+from info import info_dict
 
 
 driver = webdriver.Chrome(executable_path=r'C:\Users\heybo\Desktop\chromedriver.exe')
@@ -19,7 +20,6 @@ def check_product_test():
                     print(str(var['id']) + " " + var['title'])
                     return 'https://www.stussy.com/collections/backpacks-and-bags/products/' + pr['handle'] \
                            + '?variant=' + str(var['id'])
-
     return False
 
 
@@ -29,18 +29,17 @@ def purchase_test(url):
     element = driver.find_element_by_xpath('//button[@class="btn product__atc"]')
     if element.is_enabled():
         element.click()
-        time.sleep(0.5)
+        time.sleep(0.6)
         driver.find_element_by_xpath('//button[@class="btn ajaxcart__checkout"]').click()
-        time.sleep(0.5)
-        driver.execute_script('document.getElementById("checkout_email_or_phone").value="sample@gmail.com";')
-        driver.execute_script('document.getElementById("checkout_shipping_address_first_name").value="Chester";')
-        driver.execute_script('document.getElementById("checkout_shipping_address_last_name").value="Tester";')
-        driver.execute_script('document.getElementById("checkout_shipping_address_address1").value="123 Apple Street";')
-        driver.execute_script('document.getElementById("checkout_shipping_address_city").value="San Marcos";')
-        driver.execute_script('document.getElementById("checkout_shipping_address_zip").value="91912";')
+        driver.execute_script('document.getElementById("checkout_email_or_phone").value="'+info_dict['email']+'";')
+        driver.execute_script('document.getElementById("checkout_shipping_address_first_name").value="'+info_dict['fname']+'";')
+        driver.execute_script('document.getElementById("checkout_shipping_address_last_name").value="'+info_dict['lname']+'";')
+        driver.execute_script('document.getElementById("checkout_shipping_address_address1").value="'+info_dict['addr']+'";')
+        driver.execute_script('document.getElementById("checkout_shipping_address_city").value="'+info_dict['city']+'";')
+        driver.execute_script('document.getElementById("checkout_shipping_address_zip").value="'+info_dict['zip']+'";')
         driver.find_element_by_xpath('//button[@class="step__footer__continue-btn btn"]').click()
     else:
-        print('oopsy')
+        print('error')
 
 
 def check_product():
@@ -51,22 +50,29 @@ def check_product():
         if pr['title'] == 'Stüssy / Nike Air Zoom Spiridon Cage 2' and pr['handle'] != 'afqh9nnue888ffv':
             for var in pr['variants']:
                 if "8" in var['title']:
-                    print(str(var['id']) + " " + var['title'])
+                    # print(str(var['id']) + " " + var['title'])
                     return 'https://www.stussy.com/collections/nike/products/' + pr['handle'] \
                            + '?variant=' + str(var['id'])
-
     return False
 
 
 def purchase(url):
     driver.get(url)
-    driver.find_element_by_xpath('//div[@data-value="8"]').click()
+
+    element = driver.find_element_by_xpath('//button[@class="btn product__atc"]')
+    if element.is_enabled():
+        element.click()
+        time.sleep(0.6)
+        driver.find_element_by_xpath('//button[@class="btn ajaxcart__checkout"]').click()
+        # in real scenario, most personal info will already be added in, so we'll be forwarded to payment
+    else:
+        print('error')
 
 
 def handler():
-    link = check_product_test()
+    link = check_product()
     if link:
-        purchase_test(link)
+        purchase(link)
     else:
         print("oops")
 
@@ -74,7 +80,7 @@ def handler():
 handler()
 
 # schedule.every().day.at("11:06:02").do(handler)
-# schedule.every().day.at("10:00:00").do(handler)
+# schedule.every().day.at("10:00:00").do(handler) # desired time we want function to start at
 
 '''while True:
     schedule.run_pending()
