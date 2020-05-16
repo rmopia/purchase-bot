@@ -1,10 +1,10 @@
 
 info_dict = {
     "fname": "Sample",
-    "lname": "Smith",
-    "addr": "123 Apple Street",
+    "lname": "Sample",
+    "addr": "123 Sample Place",
     "city": "San Diego",
-    "zip": "91912",
-    "email": "samplesmith@gmail.com",
+    "zip": "91234",
+    "email": "sample@gmail.com",
     "phone_num": "1234567890"
 }
